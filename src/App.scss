@@ -1,0 +1,120 @@
+
+
+.app-container {
+    margin: auto;
+    width: 100%;
+}
+
+
+
+.movie-container {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 2fr 2fr;
+  margin: 10px auto;
+  width: 90%;
+
+  .card-container {
+    min-width: 100px;
+    max-width: 400px;
+    overflow: hidden;
+    max-height: 400px;
+    box-shadow: 2px 1px 10px #9b9b9b;
+    border-radius: 12px;
+    flex-wrap: nowrap;
+    min-height: 400px;
+    width: 320px;
+    margin: 10px;
+
+    .movie-image {
+        height: 80%;
+        background-color: #dfdfdf;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: fill;
+        }
+    }
+
+    .details-contaier {
+        padding: 4px 8px;
+        & * {
+            font-size: 18px;
+            color: #4a4a4a;
+        }
+        .details {
+            display: flex;
+            height: 30px;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+    
+    
+            h6 {
+                width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+    
+        }
+    
+        .description {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 150px;
+            word-wrap: break-word;
+        }
+    }
+}
+}
+
+
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 4px 10px #dfdfdf;
+    .search-bar {
+        padding: 0 4px;
+        background-color: #dfdfdf;
+        width: 50%;
+        border-radius: 8px;
+        display: flex;
+        height: 50px;
+        justify-content: space-around;
+        align-items: center;
+
+
+     
+
+        input {
+            height: 90%;
+            flex-grow: 1;
+            outline: none;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+
+            &:active, &:focus {
+                background: transparent;
+                outline: none;
+            }
+
+            &::placeholder{
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+svg {
+    path {
+        fill: #4a4a4a;
+    }
+}

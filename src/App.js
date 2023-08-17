@@ -2,7 +2,7 @@ import React, { useEffect }  from 'react'
 
 import Home from './Components/Screens/Home';
 import Details from './Components/Screens/Details';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -21,7 +21,14 @@ function App(){
     
   }, []);
 
-  return <RouterProvider router={routes} />
+  return  <>
+    <BrowserRouter  basename='/' >
+      <Routes>
+        <Route path='/' Component={Home} />
+        <Route path='/details' Component={Details}/>
+      </Routes>
+    </BrowserRouter>
+  </>
 
 }
 

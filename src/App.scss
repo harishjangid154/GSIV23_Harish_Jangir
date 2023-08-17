@@ -118,3 +118,48 @@ svg {
         fill: #4a4a4a;
     }
 }
+
+
+
+// details page
+
+
+.details-page {
+
+display: flex;
+padding: 10px;
+    .details-image {
+        height: 300px;
+        width: 250px;
+        min-width: 250px;
+        margin-right: 10px;
+        background-color: #dfdfdf;
+        border: 1px solid #4a4a4a;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: fill;
+        }
+    }
+
+    .movie-details {
+         .details-title {
+            display: flex;
+
+            & * {
+                margin-right: 4px;
+            }
+         }
+
+         .details-cast {
+
+         }
+
+
+         .details-descrition {
+            
+         }
+    }
+
+}

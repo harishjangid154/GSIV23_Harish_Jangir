@@ -5,6 +5,7 @@ import Search from '../Elements/Search'
 import axios from 'axios';
 import Card from '../Elements/Card';
 import { HomeSharp } from '@material-ui/icons';
+import {Navigate, Navigator} from 'react-router-dom'
 
 
 class Home extends React.PureComponent {
@@ -60,7 +61,7 @@ class Home extends React.PureComponent {
                 <Header LeftComponent={Search} RightComponent={(props) => <HomeSharp/> } />
                 <div className='movie-container'>
 
-                {this.state.moviesList.map((movie) => <Card movie={movie} key={movie.id} />)}
+                {this.state.moviesList.map((movie) => <Card movie={movie} key={movie.id} handleClick={this.handleCardClick} />)}
                 </div>
             </div>
           )

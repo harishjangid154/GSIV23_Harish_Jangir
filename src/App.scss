@@ -21,9 +21,10 @@
     box-shadow: 2px 1px 10px #9b9b9b;
     border-radius: 12px;
     flex-wrap: nowrap;
-    min-height: 400px;
-    width: 320px;
+    min-height: 300px;
+    width: 220px;
     margin: 10px;
+    height: 320px;
 
     .movie-image {
         height: 80%;
@@ -39,7 +40,7 @@
     .details-contaier {
         padding: 4px 8px;
         & * {
-            font-size: 18px;
+            font-size: 14px;
             color: #4a4a4a;
         }
         .details {
@@ -51,7 +52,7 @@
     
     
             h6 {
-                width: 150px;
+                width: 120px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -60,7 +61,7 @@
         }
     
         .description {
-            max-width: 150px;
+            max-width: 120px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;

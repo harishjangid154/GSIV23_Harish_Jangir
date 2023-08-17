@@ -6,6 +6,7 @@ import axios from 'axios';
 import Card from '../Elements/Card';
 import { HomeSharp } from '@material-ui/icons';
 import {Navigate, Navigator} from 'react-router-dom'
+import InfiniteScroll from 'react-infinite-scroller';
 
 
 class Home extends React.PureComponent {
@@ -14,7 +15,8 @@ class Home extends React.PureComponent {
         super(props);
         this.state = {
             moviesList: [],
-            totalPage: 1
+            totalPage: 1,
+            currentPage:1,
         }
 
         this.listRef = React.createRef();
@@ -22,10 +24,37 @@ class Home extends React.PureComponent {
 
     componentDidMount(){
         this.fetch();
+        window.addEventListener('scroll', this.handleScroll)
+    }
+
+    handleScroll = () => {
+        if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 500
+    ) {
+      this.setState({currentPage: this.state.currentPage + 1}, () => {
+        this.fetch(this.state.currentPage)
+      });
+    }
+    }
+
+
+
+    componentWillUnmount(){
+
     }
 
 
     fetch = async (page) => { 
+
+        if(page > this.state.totalPage){
+            return
+        }
+
+        // if(this.state.currentPage !== page) {
+        //     this.setState({currentPage: page});
+        // }else{
+        //     return
+        // }
 
         // a. Movie Title
 // b. Rating (average vote)
@@ -36,6 +65,7 @@ class Home extends React.PureComponent {
 // g. Description
      axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${env.apikey}&page=${page}&sort_by=primary_release_date.desc`).then(res => {
     //   console.log("res", res.data);
+    const totlaPage = res.data.total_pages;
       const movies = res.data.results && res.data.results.length && res.data.results.map((movie)  => {
         return {
             title: movie?.original_title,
@@ -45,8 +75,10 @@ class Home extends React.PureComponent {
             image:  movie?.poster_path,
             id: movie?.id
         }
-      })
-      this.setState({moviesList: movies})
+      });
+
+      console.log(movies)
+      this.setState({moviesList: [...this.state.moviesList, ...movies], totalPage: totlaPage})
     }).catch(er => {
       console.log(er);
     })
@@ -59,10 +91,11 @@ class Home extends React.PureComponent {
                 
             }} className='app-container'>
                 <Header LeftComponent={Search} RightComponent={(props) => <HomeSharp/> } />
-                <div className='movie-container'>
 
+                <div className='movie-container'>
                 {this.state.moviesList.map((movie) => <Card movie={movie} key={movie.id} handleClick={this.handleCardClick} />)}
                 </div>
+               
             </div>
           )
     }

@@ -53,12 +53,10 @@ class Home extends React.PureComponent {
 
 
     makeSearch = async (page = 1, searchQuery = "") => {
-      console.log(this.state.currentSearchPage, this.state.totalSearchResultPage)
         if(page > this.props.totalSearchResultPage){
           return;
         }
 
-        console.log(searchQuery);
 
         if(!searchQuery){
           this.fetch(page);
@@ -81,22 +79,15 @@ class Home extends React.PureComponent {
         }
       });
 
-      console.log(movies, res.data.results)
 
       const state = {
-        moviesList: [ ...(page === 1 ? [] : this.props.moviesList), ...(movies?.length ? movies: [])],
-        currentPage: page,
+        moviesList: [ ...(page === 1 ? [] : this.props.moviesList), ...(page === this.props.currentSearchPage ? [] : movies?.length ? movies : [])],
+        currentSearchPage: page,
         searchQuery,
         totalSearchResultPage: totlaPage
       }
 
       this.props.setReducer(state);
-      // this.setState({moviesList: , totalSearchResultPage: totlaPage, currentSearchPage: page, searchQuery}, () => {
-      //   console.log(this.state.moviesList);
-      // })
-
-
-
         }).catch(err => {
           console.log(err);
         })
@@ -105,27 +96,11 @@ class Home extends React.PureComponent {
 
     fetch = async (page) => { 
 
-
-
         if(page > this.props.totalPage){
             return
         }
-
-        // if(this.state.currentPage !== page) {
-        //     this.setState({currentPage: page});
-        // }else{
-        //     return
-        // }
-
-        // a. Movie Title
-// b. Rating (average vote)
-// c. Year of release
-// d. Length (HH:MM)
-// e. Director
-// f. Cast (Comma separated list of actors)
-// g. Description
      axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${env.apikey}&page=${page}&sort_by=primary_release_date.desc`).then(res => {
-    //   console.log("res", res.data);
+
     const totlaPage = res.data.total_pages;
       const movies = res.data.results && res.data.results.length && res.data.results.map((movie)  => {
         return {
@@ -138,15 +113,12 @@ class Home extends React.PureComponent {
         }
       });
 
-      console.log(movies)
       const state = {
-        moviesList: [...this.props.moviesList, ...movies],
+        moviesList: [...(page === 1 ? [] : this.props.moviesList), ...(page === this.props.currentPage ? [] : movies)],
         totalPage: totlaPage,
+        currentPage: page
       }
       this.props.setReducer(state)
-      // this.setState({moviesList: [...this.state.moviesList, ...movies], totalPage: totlaPage}, () => {
-      // })
-      
     }).catch(er => {
       console.log(er);
     })
@@ -154,7 +126,7 @@ class Home extends React.PureComponent {
 
 
     render(){
-      console.log(this.props);
+
       const {moviesList} = this.props;
         return (
             <div className='app-container'>

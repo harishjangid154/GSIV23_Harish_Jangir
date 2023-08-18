@@ -22,7 +22,6 @@ function Details(props) {
 
 
         Promise.all([moviePromise, creditPromise]).then((res) => {
-            console.log(res);
             const [movieResult, creditResult] = res;
             const m = movieResult.data;
             const crew = creditResult.data.crew;

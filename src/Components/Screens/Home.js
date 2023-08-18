@@ -36,7 +36,7 @@ class Home extends React.PureComponent {
         if (
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 100
     ) {
-      if(this.state.searchQuery){
+      if(this.props.searchQuery){
         this.makeSearch(this.props.currentSearchPage+1, this.props.searchQuery);
         return;
       }
@@ -53,6 +53,7 @@ class Home extends React.PureComponent {
 
 
     makeSearch = async (page = 1, searchQuery = "") => {
+      
         if(page > this.props.totalSearchResultPage){
           return;
         }
@@ -66,7 +67,7 @@ class Home extends React.PureComponent {
         axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${env.apikey}&query=${searchQuery}&page=${page}}`).then(res => {
 
 
-        const totlaPage = res.data.total_pages;
+        const totlaPage = parseInt(res.data.total_pages);
         let movies = []
        movies = res.data.results && res.data.results.length && res.data.results.map((movie)  => {
         return {
@@ -84,8 +85,9 @@ class Home extends React.PureComponent {
         moviesList: [ ...(page === 1 ? [] : this.props.moviesList), ...(page === this.props.currentSearchPage ? [] : movies?.length ? movies : [])],
         currentSearchPage: page,
         searchQuery,
-        totalSearchResultPage: totlaPage
+        totalSearchResultPage: totlaPage,
       }
+
 
       this.props.setReducer(state);
         }).catch(err => {
@@ -116,7 +118,7 @@ class Home extends React.PureComponent {
       const state = {
         moviesList: [...(page === 1 ? [] : this.props.moviesList), ...(page === this.props.currentPage ? [] : movies)],
         totalPage: totlaPage,
-        currentPage: page
+        currentPage: page,
       }
       this.props.setReducer(state)
     }).catch(er => {

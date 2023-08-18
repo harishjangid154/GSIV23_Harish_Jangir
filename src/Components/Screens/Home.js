@@ -7,6 +7,8 @@ import Card from '../Elements/Card';
 import { HomeSharp } from '@material-ui/icons';
 import {Navigate, Navigator} from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroller';
+import { connect } from 'react-redux';
+import { actions } from '../../store/movieReducer';
 
 
 class Home extends React.PureComponent {
@@ -17,6 +19,9 @@ class Home extends React.PureComponent {
             moviesList: [],
             totalPage: 1,
             currentPage:1,
+            currentSearchPage: 1,
+            totalSearchResultPage: 1,
+            searchQuery: ""
         }
 
         this.listRef = React.createRef();
@@ -29,24 +34,80 @@ class Home extends React.PureComponent {
 
     handleScroll = () => {
         if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 500
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 100
     ) {
-      this.setState({currentPage: this.state.currentPage + 1}, () => {
-        this.fetch(this.state.currentPage)
-      });
+      if(this.state.searchQuery){
+        this.makeSearch(this.props.currentSearchPage+1, this.props.searchQuery);
+        return;
+      }
+      this.fetch(this.props.currentPage+1);
+      
     }
     }
 
 
 
     componentWillUnmount(){
+      window.removeEventListener("scroll", this.handleScroll)
+    }
 
+
+    makeSearch = async (page = 1, searchQuery = "") => {
+      console.log(this.state.currentSearchPage, this.state.totalSearchResultPage)
+        if(page > this.props.totalSearchResultPage){
+          return;
+        }
+
+        console.log(searchQuery);
+
+        if(!searchQuery){
+          this.fetch(page);
+          return
+        }
+
+        axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${env.apikey}&query=${searchQuery}&page=${page}}`).then(res => {
+
+
+        const totlaPage = res.data.total_pages;
+        let movies = []
+       movies = res.data.results && res.data.results.length && res.data.results.map((movie)  => {
+        return {
+            title: movie?.original_title,
+            description: movie?.overview,
+            rating: movie?.vote_average,
+            year: movie?.release_date && new Date(movie.release_date).getFullYear(),
+            image:  movie?.poster_path,
+            id: movie?.id
+        }
+      });
+
+      console.log(movies, res.data.results)
+
+      const state = {
+        moviesList: [ ...(page === 1 ? [] : this.props.moviesList), ...(movies?.length ? movies: [])],
+        currentPage: page,
+        searchQuery,
+        totalSearchResultPage: totlaPage
+      }
+
+      this.props.setReducer(state);
+      // this.setState({moviesList: , totalSearchResultPage: totlaPage, currentSearchPage: page, searchQuery}, () => {
+      //   console.log(this.state.moviesList);
+      // })
+
+
+
+        }).catch(err => {
+          console.log(err);
+        })
     }
 
 
     fetch = async (page) => { 
 
-        if(page > this.state.totalPage){
+
+
+        if(page > this.props.totalPage){
             return
         }
 
@@ -78,7 +139,14 @@ class Home extends React.PureComponent {
       });
 
       console.log(movies)
-      this.setState({moviesList: [...this.state.moviesList, ...movies], totalPage: totlaPage})
+      const state = {
+        moviesList: [...this.props.moviesList, ...movies],
+        totalPage: totlaPage,
+      }
+      this.props.setReducer(state)
+      // this.setState({moviesList: [...this.state.moviesList, ...movies], totalPage: totlaPage}, () => {
+      // })
+      
     }).catch(er => {
       console.log(er);
     })
@@ -86,14 +154,19 @@ class Home extends React.PureComponent {
 
 
     render(){
+      console.log(this.props);
+      const {moviesList} = this.props;
         return (
-            <div ref={r => this.listRef = r} onLoad={() => {
-                
-            }} className='app-container'>
-                <Header LeftComponent={Search} RightComponent={(props) => <HomeSharp/> } />
-
+            <div className='app-container'>
+                <Header LeftComponent={Search} RightComponent={(props) => <HomeSharp/> } leftComponentProps={
+                  {
+                    onSearch: this.makeSearch,
+                    currentPage: this.state.currentSearchPage,
+                    setState: this.setState
+                  }
+                } />
                 <div className='movie-container'>
-                {this.state.moviesList.map((movie) => <Card movie={movie} key={movie.id} handleClick={this.handleCardClick} />)}
+                {moviesList.map((movie) => <Card movie={movie} key={movie.name} handleClick={this.handleCardClick} />)}
                 </div>
                
             </div>
@@ -102,4 +175,25 @@ class Home extends React.PureComponent {
 }
 
 
-export default Home
+const mapStateToProps = (state) => {
+
+  return {
+    ...state
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+
+  return {
+    setReducerWithKey: (key, payload) => {
+      dispatch(actions.setReducerState({type: key , payload}))
+    },
+
+    setReducer: (state) => {
+      dispatch(actions.setReducerState(state));
+    }
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
